@@ -28,7 +28,7 @@ model Project {
   description String?
   status      String    @default("active")
   budget      Float?
-  startDate   DateTime?
+  dueDate     DateTime?
   user        User      @relation(fields: [userId], references: [id])
   userId      String
   songs       Song[]
@@ -82,10 +82,12 @@ model Session {
 model Comment {
   id          String    @id @default(cuid())
   content     String
+  author      String?
+  email       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   variation   Variation @relation(fields: [variationId], references: [id])
   variationId String
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      String?
 }

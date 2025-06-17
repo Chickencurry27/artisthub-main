@@ -12,7 +12,7 @@ export async function GET() {
     const projects = await prisma.project.findMany({
       where: { userId: user.id },
       include: {
-        client: true,
+        clients: true,
       },
     });
     return NextResponse.json(projects);
@@ -29,10 +29,10 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { name, description, clientId, status } = body;
+  const { name, description, clientId, status, dueDate } = body;
 
   if (!name || !clientId) {
-    return new NextResponse('Missing required fields', { status: 400 });
+    return new NextResponse("Missing required fields", { status: 400 });
   }
 
   try {
@@ -40,8 +40,11 @@ export async function POST(request: Request) {
       data: {
         name,
         description,
-        clientId,
+        clients: {
+          connect: { id: clientId },
+        },
         status,
+        dueDate: dueDate ? new Date(dueDate) : null,
         userId: user.id,
       },
     });

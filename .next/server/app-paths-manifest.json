@@ -1,6 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/clients/page": "app/clients/page.js"
+  "/clients/page": "app/clients/page.js",
+  "/usage/page": "app/usage/page.js",
+  "/share/[projectId]/[token]/page": "app/share/[projectId]/[token]/page.js",
+  "/projects/page": "app/projects/page.js"
 }

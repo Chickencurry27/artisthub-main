@@ -31,6 +31,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/page.js"
     ],
+    "/usage/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/usage/page.js"
+    ],
     "/clients/loading": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -71,20 +76,45 @@
       "static/chunks/main-app.js",
       "static/chunks/app/comments/page.js"
     ],
-    "/api/logout/route": [
+    "/api/songs/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/logout/route.js"
+      "static/chunks/app/api/songs/route.js"
     ],
-    "/api/login/route": [
+    "/api/upload/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/login/route.js"
+      "static/chunks/app/api/upload/route.js"
     ],
-    "/_not-found/page": [
+    "/api/share/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/api/share/route.js"
+    ],
+    "/share/[projectId]/[token]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/share/[projectId]/[token]/page.js"
+    ],
+    "/api/share/[projectId]/[token]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/share/[projectId]/[token]/route.js"
+    ],
+    "/api/comments/[projectId]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/comments/[projectId]/route.js"
+    ],
+    "/api/comments/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/comments/route.js"
+    ],
+    "/profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/profile/page.js"
     ]
   }
 }

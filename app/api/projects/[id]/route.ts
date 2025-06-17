@@ -9,10 +9,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 
   const body = await request.json();
-  const { name, description, clientId, status } = body;
+  const { name, description, clientId, status, dueDate } = body;
 
   if (!name || !clientId) {
-    return new NextResponse('Missing required fields', { status: 400 });
+    return new NextResponse("Missing required fields", { status: 400 });
   }
 
   try {
@@ -23,6 +23,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         description,
         clientId,
         status,
+        dueDate: dueDate ? new Date(dueDate) : null,
       },
     });
     return NextResponse.json(updatedProject);

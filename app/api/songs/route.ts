@@ -27,7 +27,20 @@ export async function GET(request: Request) {
         variations: true,
       },
     });
-    return NextResponse.json(songs);
+
+    const songsWithFileUrl = songs.map((song: any) => ({
+      ...song,
+      versions: song.variations.map((v: any) => ({
+        id: v.id,
+        name: v.name,
+        fileUrl: v.url,
+        notes: null,
+        createdAt: v.createdAt.toISOString(),
+        version: v.name,
+      })),
+    }));
+
+    return NextResponse.json(songsWithFileUrl);
   } catch (error) {
     console.error('Failed to fetch songs:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
@@ -53,8 +66,14 @@ export async function POST(request: Request) {
         name,
         projectId,
         variations: {
-          create: variations,
+          create: variations.map((v: { name: string; url?: string; fileUrl?: string }) => ({
+            name: v.name,
+            url: v.fileUrl || v.url,
+          })),
         },
+      },
+      include: {
+        variations: true,
       },
     });
     return NextResponse.json(newSong, { status: 201 });

@@ -16,13 +16,10 @@ export interface SharedProject {
 }
 
 export interface Comment {
-  id: string
-  projectId: string
-  songId: string
-  versionId: string
-  author: string
-  email: string
-  content: string
-  timestamp: number
-  createdAt: string
+  id: string;
+  author: string;
+  email: string;
+  content: string;
+  variationId: string;
+  createdAt: string;
 }

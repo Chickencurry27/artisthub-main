@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "@/hooks/use-toast"
-import { Trash2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
+import { Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,37 +25,48 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import type { Client } from "@/app/(auth)/clients/page"
-import type { Project } from "@/components/projects-grid"
+} from "@/components/ui/alert-dialog";
+import type { Client } from "@/lib/types";
+import type { Project } from "@/components/projects-grid";
 
 interface ProjectFormProps {
-  clients: Client[]
-  editingProject?: Project
-  preSelectedClientId?: string
+  clients: Client[];
+  editingProject?: Project;
+  preSelectedClientId?: string;
   onSubmit: (project: {
-    name: string
-    description: string
-    clientId: string
-    status: "active" | "completed" | "on-hold"
-    budget: number
-    startDate: string
-    endDate?: string
-  }) => void
-  onDelete?: (projectId: string) => void
+    name: string;
+    description: string;
+    clientId: string;
+    status: "active" | "completed" | "on-hold";
+    budget: number;
+    dueDate?: string;
+  }) => void;
+  onDelete?: (projectId: string) => void;
 }
 
-export function ProjectForm({ clients, editingProject, preSelectedClientId, onSubmit, onDelete }: ProjectFormProps) {
-  const [formData, setFormData] = useState({
+export function ProjectForm({
+  clients,
+  editingProject,
+  preSelectedClientId,
+  onSubmit,
+  onDelete,
+}: ProjectFormProps) {
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    clientId: string;
+    status: "active" | "completed" | "on-hold";
+    budget: string;
+    dueDate: string;
+  }>({
     name: "",
     description: "",
     clientId: preSelectedClientId || "",
-    status: "active" as const,
+    status: "active",
     budget: "",
-    startDate: "",
-    endDate: "",
-  })
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    dueDate: "",
+  });
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (editingProject) {
@@ -58,30 +75,29 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
         description: editingProject.description,
         clientId: editingProject.clientId,
         status: editingProject.status,
-        budget: editingProject.budget.toString(),
-        startDate: editingProject.startDate,
-        endDate: editingProject.endDate || "",
-      })
+        budget: editingProject.budget ? editingProject.budget.toString() : "",
+        dueDate: editingProject.dueDate || "",
+      });
     }
-  }, [editingProject])
+  }, [editingProject]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!formData.name || !formData.clientId || !formData.startDate) {
+    if (!formData.name || !formData.clientId) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     onSubmit({
       ...formData,
       budget: Number.parseFloat(formData.budget) || 0,
-      endDate: formData.endDate || undefined,
-    })
+      dueDate: formData.dueDate || undefined,
+    });
 
     if (!editingProject) {
       setFormData({
@@ -90,34 +106,37 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
         clientId: preSelectedClientId || "",
         status: "active",
         budget: "",
-        startDate: "",
-        endDate: "",
-      })
+        dueDate: "",
+      });
     }
 
     toast({
       title: "Success",
-      description: editingProject ? "Project updated successfully!" : "Project added successfully!",
-    })
-  }
+      description: editingProject
+        ? "Project updated successfully!"
+        : "Project added successfully!",
+    });
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+  };
 
   const handleDelete = () => {
     if (editingProject && onDelete) {
-      onDelete(editingProject.id)
-      setShowDeleteDialog(false)
+      onDelete(editingProject.id);
+      setShowDeleteDialog(false);
       toast({
         title: "Success",
         description: "Project deleted successfully!",
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -138,7 +157,9 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
             <Label htmlFor="clientId">Client *</Label>
             <Select
               value={formData.clientId}
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, clientId: value }))}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, clientId: value }))
+              }
               disabled={!!preSelectedClientId}
             >
               <SelectTrigger>
@@ -147,7 +168,8 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
               <SelectContent>
                 {clients.map((client) => (
                   <SelectItem key={client.id} value={client.id}>
-                    {client.name} {client.artistname ? `(${client.artistname})` : ""}
+                    {client.name}{" "}
+                    {client.artistname ? `(${client.artistname})` : ""}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -172,7 +194,9 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
             <Label htmlFor="status">Status</Label>
             <Select
               value={formData.status}
-              onValueChange={(value: any) => setFormData((prev) => ({ ...prev, status: value }))}
+              onValueChange={(value: any) =>
+                setFormData((prev) => ({ ...prev, status: value }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -201,19 +225,26 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="startDate">Start Date *</Label>
+            <Label>Added Date</Label>
             <Input
-              id="startDate"
-              name="startDate"
-              type="date"
-              value={formData.startDate}
-              onChange={handleChange}
-              required
+              type="text"
+              value={
+                editingProject
+                  ? new Date(editingProject.createdAt).toLocaleDateString()
+                  : "Will be set on creation"
+              }
+              disabled
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="endDate">End Date</Label>
-            <Input id="endDate" name="endDate" type="date" value={formData.endDate} onChange={handleChange} />
+            <Label htmlFor="dueDate">Due Date</Label>
+            <Input
+              id="dueDate"
+              name="dueDate"
+              type="date"
+              value={formData.dueDate}
+              onChange={handleChange}
+            />
           </div>
         </div>
 
@@ -222,7 +253,12 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
             {editingProject ? "Update Project" : "Add Project"}
           </Button>
           {editingProject && onDelete && (
-            <Button type="button" variant="destructive" onClick={() => setShowDeleteDialog(true)} className="px-3">
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              className="px-3"
+            >
               <Trash2 className="h-4 w-4" />
             </Button>
           )}
@@ -234,7 +270,8 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the project and all associated songs.
+              This action cannot be undone. This will permanently delete the
+              project and all associated songs.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -249,5 +286,5 @@ export function ProjectForm({ clients, editingProject, preSelectedClientId, onSu
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

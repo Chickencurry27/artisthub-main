@@ -22,8 +22,14 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         name,
         variations: {
           deleteMany: {},
-          create: variations,
+          create: variations.map((v: { name: string; url?: string; fileUrl?: string }) => ({
+            name: v.name,
+            url: v.fileUrl || v.url,
+          })),
         },
+      },
+      include: {
+        variations: true,
       },
     });
     return NextResponse.json(updatedSong);
