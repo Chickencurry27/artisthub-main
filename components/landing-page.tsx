@@ -207,6 +207,11 @@ export function LandingPage() {
                           placeholder="Enter your password"
                           required
                         />
+                        <div className="text-right">
+                          <a href="/forgot-password-email-entry" className="text-xs text-blue-600 hover:underline">
+                            Forgot Password?
+                          </a>
+                        </div>
                       </div>
                       <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? "Signing In..." : "Sign In"}
