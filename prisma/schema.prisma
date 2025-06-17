@@ -19,6 +19,8 @@ model User {
   clients        Client[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  passwordResetToken String? @unique
+  passwordResetTokenExpiresAt DateTime?
   Comment        Comment[]
 }
 
