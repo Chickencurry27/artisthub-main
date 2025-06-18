@@ -273,7 +273,7 @@ export function LandingPage() {
                           required
                         />
                         <div className="text-right">
-                          <a href="/forgot-password-email-entry" className="text-xs text-blue-600 hover:underline">
+                          <a href="/forgot-password" className="text-xs text-blue-600 hover:underline">
                             Forgot Password?
                           </a>
                         </div>
