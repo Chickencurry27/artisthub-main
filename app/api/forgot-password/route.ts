@@ -51,12 +51,27 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Send an email with Nodemailer using the raw token
+    console.log("Nodemailer Host:", process.env.EMAIL_SERVER_HOST);
+    console.log("Nodemailer Port:", process.env.EMAIL_SERVER_PORT);
+    console.log("Nodemailer From Address:", process.env.EMAIL_FROM);
+    console.log("Nodemailer User (expected undefined for Mailpit):", process.env.EMAIL_SERVER_USER);
+    // Nodemailer transport configuration.
+    // The current setup is suitable for local development and testing with Mailpit,
+    // which typically doesn't require authentication.
+    // For production environments using SMTP providers like Gmail, SendGrid, AWS SES, etc.:
+    // 1. Authentication is usually required.
+    // 2. Set `EMAIL_SERVER_USER` and `EMAIL_SERVER_PASSWORD` environment variables with your SMTP credentials.
+    // 3. The `auth` object below will then use these credentials.
+    // 4. IMPORTANT: Securely manage your credentials. Use environment variables; DO NOT hardcode them.
+    // 5. For services like Gmail, if you have 2-Factor Authentication (2FA) enabled,
+    //    you might need to generate an "App Password" to use instead of your regular account password.
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_SERVER_HOST,
-      port: Number(process.env.EMAIL_SERVER_PORT),
+      host: process.env.EMAIL_SERVER_HOST, // e.g., 'smtp.gmail.com' for Gmail
+      port: Number(process.env.EMAIL_SERVER_PORT), // e.g., 587 for TLS, 465 for SSL
+      // secure: true, // Use true for port 465 (SSL), false for port 587 (TLS/STARTTLS) - typically true for production
       auth: {
-        user: process.env.EMAIL_SERVER_USER,
-        pass: process.env.EMAIL_SERVER_PASSWORD,
+        user: process.env.EMAIL_SERVER_USER, // Your SMTP username
+        pass: process.env.EMAIL_SERVER_PASSWORD, // Your SMTP password or App Password
       },
     });
 
