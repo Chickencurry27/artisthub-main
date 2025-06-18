@@ -45,6 +45,7 @@ export interface Project {
 export interface Song {
   id: string;
   name: string;
+  status: "in_progress" | "completed" | "on-hold";
   projectId: string;
   variations: SongVersion[];
   createdAt: string;
@@ -67,6 +68,7 @@ interface ProjectsGridProps {
   onShare?: (project: Project) => void;
   onDeleteSong: (songId: string) => void;
   onDeleteVersion: (songId: string, versionId: string) => void;
+  onUpdateSong: (songId: string, data: Partial<Song>) => void;
 }
 
 const statusColors = {
@@ -84,6 +86,7 @@ export function ProjectsGrid({
   onShare,
   onDeleteSong,
   onDeleteVersion,
+  onUpdateSong,
 }: ProjectsGridProps) {
   const [expandedProjects, setExpandedProjects] = useState<
     Record<string, boolean>
@@ -198,6 +201,13 @@ export function ProjectsGrid({
     if (onShare) {
       onShare(project);
     }
+  };
+
+  const handleStatusChange = (
+    songId: string,
+    status: "in_progress" | "completed" | "on-hold"
+  ) => {
+    onUpdateSong(songId, { status });
   };
 
   return (
@@ -324,7 +334,14 @@ export function ProjectsGrid({
                         );
                         const latestVersion = sortedVariations[0];
                         return (
-                          <Card key={song.id} className="bg-muted/20">
+                          <Card
+                            key={song.id}
+                            className={`bg-muted/20 ${
+                              song.status === "completed"
+                                ? "bg-green-100 border-green-200"
+                                : ""
+                            }`}
+                          >
                             <Collapsible
                               open={expandedSongs[song.id]}
                               onOpenChange={() => toggleSongExpand(song.id)}
@@ -359,6 +376,27 @@ export function ProjectsGrid({
                                       </div>
                                     </div>
                                     <div className="flex items-center gap-2">
+                                      <select
+                                        value={song.status}
+                                        onChange={(e) =>
+                                          handleStatusChange(
+                                            song.id,
+                                            e.target.value as
+                                              | "in_progress"
+                                              | "completed"
+                                              | "on-hold"
+                                          )
+                                        }
+                                        className="text-sm rounded-md border-gray-300"
+                                      >
+                                        <option value="in_progress">
+                                          In Progress
+                                        </option>
+                                        <option value="completed">
+                                          Completed
+                                        </option>
+                                        <option value="on-hold">On Hold</option>
+                                      </select>
                                       <Button
                                         variant="outline"
                                         size="sm"

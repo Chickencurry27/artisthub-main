@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 async function main() {
   const alice = await prisma.user.upsert({
@@ -7,6 +7,7 @@ async function main() {
     create: {
       email: 'alice@prisma.io',
       name: 'Alice',
+      subscriptionTier: 'premium',
     },
   });
 

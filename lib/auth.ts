@@ -1,6 +1,6 @@
 import { Lucia } from "lucia";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import { prisma } from "./prisma";
+import { prisma } from "./prisma.js";
 import { cookies } from "next/headers";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
@@ -16,6 +16,7 @@ export const lucia = new Lucia(adapter, {
         return {
             email: attributes.email,
             name: attributes.name,
+            subscriptionTier: attributes.subscriptionTier,
         };
     },
 });
@@ -53,5 +54,9 @@ declare module "lucia" {
 
 interface DatabaseUserAttributes {
     email: string;
-    name: string;
+    name: string | null;
+    hashedPassword: string | null;
+    passwordResetToken: string | null;
+    passwordResetTokenExpiresAt: Date | null;
+    subscriptionTier: string;
 }

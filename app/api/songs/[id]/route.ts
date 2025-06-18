@@ -9,9 +9,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 
   const body = await request.json();
-  const { name, variations } = body;
+  const { name, variations, status } = body;
 
-  if (!name) {
+  if (!name && !status) {
     return new NextResponse('Missing required fields', { status: 400 });
   }
 
@@ -19,14 +19,17 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const updatedSong = await prisma.song.update({
       where: { id: params.id },
       data: {
-        name,
-        variations: {
-          deleteMany: {},
-          create: variations.map((v: { name: string; url?: string; fileUrl?: string }) => ({
-            name: v.name,
-            url: v.fileUrl || v.url,
-          })),
-        },
+        ...(name && { name }),
+        ...(status && { status }),
+        ...(variations && {
+          variations: {
+            deleteMany: {},
+            create: variations.map((v: { name: string; url?: string; fileUrl?: string }) => ({
+              name: v.name,
+              url: v.fileUrl || v.url,
+            })),
+          },
+        }),
       },
       include: {
         variations: true,

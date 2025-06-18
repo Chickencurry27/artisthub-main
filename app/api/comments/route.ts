@@ -8,16 +8,16 @@ interface Comment {
   songId: string;
   variationId: string;
   author: string;
-  email: string;
+  email?: string;
   content: string;
-  userId: string;
+  userId?: string;
   createdAt: Date;
 }
 
 export async function POST(request: Request) {
   const { variationId, author, email, content } = await request.json();
 
-  if (!variationId || !author || !email || !content) {
+  if (!variationId || !author || !content) {
     return new NextResponse("Missing required fields", { status: 400 });
   }
 

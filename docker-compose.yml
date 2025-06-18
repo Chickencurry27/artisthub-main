@@ -1,44 +1,47 @@
-version: '3.8'
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - DATABASE_URL=mysql://user:password@db:3306/artisthub
     ports:
-      - '3000:3000'
+      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      DATABASE_URL: mysql://user:password@db:3306/artisthub
+    env_file:
+      - .env
   db:
     image: mariadb:10.5
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: artisthub
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+    env_file:
+      - .env
     ports:
-      - '3307:3306'
+      - "3307:3306"
     volumes:
       - mariadb-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h localhost -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: lscr.io/linuxserver/phpmyadmin:latest
     ports:
-      - '8081:80'
+      - "8081:80"
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
     depends_on:
       - db
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI port
 
 volumes:
   mariadb-data:

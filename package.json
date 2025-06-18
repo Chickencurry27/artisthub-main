@@ -2,12 +2,18 @@
   "name": "artisthub",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node prisma/seed.ts"
+    "migrate": "prisma migrate dev",
+    "postinstall": "prisma generate",
+    "build:seed": "tsc --project tsconfig.seed.json"
+  },
+  "prisma": {
+    "seed": "node dist/prisma/seed.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -9,3 +9,10 @@ export type Client = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type User = {
+  id: string;
+  name: string | null;
+  email: string;
+  subscriptionTier: string;
+};

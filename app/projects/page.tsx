@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Search, Filter, Copy, Check } from "lucide-react";
 import { ProjectForm } from "@/components/project-form";
-import { ProjectsGrid } from "@/components/projects-grid";
+import { ProjectsGrid, type Song } from "@/components/projects-grid";
 import { SongForm } from "@/components/song-form";
 import { useAuth } from "@/components/auth-provider";
 import { useToast } from "@/hooks/use-toast";
@@ -48,20 +48,6 @@ type Project = {
   status: "active" | "completed" | "on-hold";
   budget: number | null;
   dueDate?: string;
-  createdAt: string;
-};
-
-type Song = {
-  id: string;
-  name: string;
-  projectId: string;
-  variations: {
-    id: string;
-    name: string;
-    url?: string;
-    notes?: string;
-    createdAt: string;
-  }[];
   createdAt: string;
 };
 
@@ -473,6 +459,32 @@ function ProjectsPageContent() {
     }
   };
 
+  const handleUpdateSong = async (songId: string, data: Partial<Song>) => {
+    try {
+      const res = await fetch(`/api/songs/${songId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to update song");
+      const updatedSong = await res.json();
+      setSongs((prev) =>
+        prev.map((s) => (s.id === songId ? { ...s, ...updatedSong } : s))
+      );
+      toast({
+        title: "Success",
+        description: "Song updated successfully!",
+      });
+    } catch (error) {
+      console.error("Error updating song:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update song. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const clearSearch = () => {
     setSearchQuery("");
   };
@@ -649,6 +661,7 @@ function ProjectsPageContent() {
             onShare={handleShareProject}
             onDeleteSong={handleDeleteSong}
             onDeleteVersion={handleDeleteVersion}
+            onUpdateSong={handleUpdateSong}
           />
         )}
       </div>

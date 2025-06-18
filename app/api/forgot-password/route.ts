@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       // Log this server-side for monitoring, if desired.
       console.log(`Password reset requested for non-existent user: ${email}`);
       // Return a generic success message to prevent email enumeration.
-      return NextResponse.json({ message: 'If your email is registered, you will receive a password reset link.' }, { status: 200 });
+      return NextResponse.json({ error: 'User not found.' }, { status: 404 });
     }
 
     // 2. Generate a unique, secure password reset token

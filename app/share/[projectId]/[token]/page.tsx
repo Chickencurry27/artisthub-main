@@ -64,7 +64,6 @@ export default function SharedProjectPage() {
   const [isValid, setIsValid] = useState(false);
   const [newComment, setNewComment] = useState({
     author: "",
-    email: "",
     content: "",
     songId: "",
     variationId: "",
@@ -130,7 +129,6 @@ export default function SharedProjectPage() {
 
     if (
       !newComment.author ||
-      !newComment.email ||
       !newComment.content ||
       !newComment.songId ||
       !newComment.variationId
@@ -159,7 +157,6 @@ export default function SharedProjectPage() {
       setComments((prev) => [...prev, newCommentData]);
       setNewComment({
         author: "",
-        email: "",
         content: "",
         songId: "",
         variationId: "",
@@ -474,68 +471,70 @@ export default function SharedProjectPage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCommentSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="author">Name *</Label>
-                      <Input
-                        id="author"
-                        value={newComment.author}
-                        onChange={(e) =>
-                          setNewComment((prev) => ({
-                            ...prev,
-                            author: e.target.value,
-                          }))
-                        }
-                        placeholder="Your name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={newComment.email}
-                        onChange={(e) =>
-                          setNewComment((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
-                  </div>
                   <div className="space-y-2">
-                    <Label htmlFor="version">Song Version *</Label>
-                    <select
-                      id="version"
-                      value={`${newComment.songId}|${newComment.variationId}`}
-                      onChange={(e) => {
-                        const [songId, variationId] = e.target.value.split("|");
+                    <Label htmlFor="author">Name *</Label>
+                    <Input
+                      id="author"
+                      value={newComment.author}
+                      onChange={(e) =>
                         setNewComment((prev) => ({
                           ...prev,
-                          songId,
-                          variationId,
+                          author: e.target.value,
+                        }))
+                      }
+                      placeholder="Your name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="song">Song *</Label>
+                    <select
+                      id="song"
+                      value={newComment.songId}
+                      onChange={(e) => {
+                        setNewComment((prev) => ({
+                          ...prev,
+                          songId: e.target.value,
+                          variationId: "", // Reset variation when song changes
                         }));
                       }}
                       className="w-full px-3 py-2 border border-input rounded-md text-sm"
                       required
                     >
-                      <option value="">Select a song version...</option>
-                      {songs.map((song) =>
-                        song.variations.map((variation) => (
-                          <option
-                            key={`${song.id}|${variation.id}`}
-                            value={`${song.id}|${variation.id}`}
-                          >
-                            {song.name} - v{variation.name}
-                          </option>
-                        ))
-                      )}
+                      <option value="">Select a song...</option>
+                      {songs.map((song) => (
+                        <option key={song.id} value={song.id}>
+                          {song.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
+                  {newComment.songId && (
+                    <div className="space-y-2">
+                      <Label htmlFor="version">Version *</Label>
+                      <select
+                        id="version"
+                        value={newComment.variationId}
+                        onChange={(e) => {
+                          setNewComment((prev) => ({
+                            ...prev,
+                            variationId: e.target.value,
+                          }));
+                        }}
+                        className="w-full px-3 py-2 border border-input rounded-md text-sm"
+                        required
+                      >
+                        <option value="">Select a version...</option>
+                        {songs
+                          .find((s) => s.id === newComment.songId)
+                          ?.variations.map((variation) => (
+                            <option key={variation.id} value={variation.id}>
+                              v{variation.name}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="content">Comment *</Label>
                     <Textarea
